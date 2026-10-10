@@ -878,6 +878,8 @@ class MetaDetailsViewModel @Inject constructor(
             country = enrichment.countries?.joinToString(", "),
             awards = null,
             language = enrichment.language,
+            budget = enrichment.budget,
+            revenue = enrichment.revenue,
             links = emptyList(),
             // Honor the "Disable Trailers in TMDB Enrichment" toggle even on
             // this synthetic fallback meta (issue #1647). The main enrichment
@@ -1602,7 +1604,9 @@ class MetaDetailsViewModel @Inject constructor(
                 status = enrichment.status ?: updated.status,
                 ageRating = enrichment.ageRating ?: updated.ageRating,
                 country = enrichment.countries?.joinToString(", ") ?: updated.country,
-                language = enrichment.language ?: updated.language
+                language = enrichment.language ?: updated.language,
+                budget = enrichment.budget ?: updated.budget,
+                revenue = enrichment.revenue ?: updated.revenue
             )
         }
 

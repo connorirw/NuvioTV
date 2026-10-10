@@ -164,7 +164,8 @@ private enum class PeopleSectionTab {
     RATINGS,
     MORE_LIKE_THIS,
     TRAILER,
-    COLLECTION
+    COLLECTION,
+    STATS
 }
 
 private data class PeopleTabItem(
@@ -1353,6 +1354,7 @@ private fun MetaDetailsContent(
     val moreLikeTabFocusRequester = remember { FocusRequester() }
     val trailerTabFocusRequester = remember { FocusRequester() }
     val collectionTabFocusRequester = remember { FocusRequester() }
+    val statsTabFocusRequester = remember { FocusRequester() }
     val ratingsTabFocusRequester = remember { FocusRequester() }
     val ratingsContentFocusRequester = remember { FocusRequester() }
     val ratingsGridFocusRequester = remember { FocusRequester() }
@@ -1360,6 +1362,7 @@ private fun MetaDetailsContent(
     val moreLikeSectionFocusRequester = remember { FocusRequester() }
     val trailerSectionFocusRequester = remember { FocusRequester() }
     val collectionSectionFocusRequester = remember { FocusRequester() }
+    val statsSectionFocusRequester = remember { FocusRequester() }
     val commentsTitleModeFocusRequester = remember { FocusRequester() }
     val commentsEpisodeModeFocusRequester = remember { FocusRequester() }
     val commentsRowEntryFocusRequester = remember { FocusRequester() }
@@ -1895,7 +1898,10 @@ private fun MetaDetailsContent(
         moreLikeTabFocusRequester,
         trailerTabFocusRequester,
         collectionTabFocusRequester,
-        collectionName
+        statsTabFocusRequester,
+        collectionName,
+        meta.budget,
+        meta.revenue
     ) {
         buildList {
             if (hasCastSection) {
@@ -1940,6 +1946,15 @@ private fun MetaDetailsContent(
                         tab = PeopleSectionTab.COLLECTION,
                         label = collectionName ?: strTabCollection,
                         focusRequester = collectionTabFocusRequester
+                    )
+                )
+            }
+            if (meta.budget != null || meta.revenue != null) {
+                add(
+                    PeopleTabItem(
+                        tab = PeopleSectionTab.STATS,
+                        label = "Stats",
+                        focusRequester = statsTabFocusRequester
                     )
                 )
             }
@@ -2022,6 +2037,7 @@ private fun MetaDetailsContent(
             PeopleSectionTab.TRAILER -> trailerSectionFocusRequester
             PeopleSectionTab.COLLECTION -> collectionSectionFocusRequester
             PeopleSectionTab.RATINGS -> ratingsGridFocusRequester
+            PeopleSectionTab.STATS -> statsSectionFocusRequester
         }
         isSeries -> seasonDownFocusRequester ?: heroPlayFocusRequester
         else -> heroPlayFocusRequester
@@ -2409,6 +2425,7 @@ private fun MetaDetailsContent(
                                     PeopleSectionTab.TRAILER -> trailerSectionFocusRequester
                                     PeopleSectionTab.COLLECTION -> collectionSectionFocusRequester
                                     PeopleSectionTab.RATINGS -> ratingsContentFocusRequester
+                                    PeopleSectionTab.STATS -> statsSectionFocusRequester
                                 }
                                 name == "collection_section" -> collectionSectionFocusRequester
                                 name == "trakt_comments" -> when {
@@ -2816,6 +2833,19 @@ private fun MetaDetailsContent(
                                     firstItemFocusRequester = ratingsContentFocusRequester,
                                     ratingsGridFocusRequester = ratingsGridFocusRequester,
                                     modifier = Modifier.heightIn(min = if (!hasItemsBelow) castSectionHeight else NuvioTheme.spacing.none)
+                                )
+                            }
+
+                            PeopleSectionTab.STATS -> {
+                                StatsSection(
+                                    budget = meta.budget,
+                                    revenue = meta.revenue,
+                                    upFocusRequester = if (hasVisiblePeopleTabs) {
+                                        statsTabFocusRequester
+                                    } else {
+                                        seasonDownFocusRequester ?: heroPlayFocusRequester
+                                    },
+                                    sectionFocusRequester = statsSectionFocusRequester
                                 )
                             }
                         }

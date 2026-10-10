@@ -319,6 +319,9 @@ class TmdbMetadataService(
                         )
                     }
 
+                val budget = details?.budget
+                val revenue = details?.revenue
+
                 val creatorMembers = if (tmdbType == "tv") {
                     details?.createdBy
                         .orEmpty()
@@ -455,7 +458,7 @@ class TmdbMetadataService(
                     poster == null && castMembers.isEmpty() && director.isEmpty() && writer.isEmpty() &&
                     releaseInfo == null && rating == null && runtime == null && countries.isNullOrEmpty() && language == null &&
                     productionCompanies.isEmpty() && networks.isEmpty() && ageRating == null && status == null &&
-                    trailers.isEmpty()
+                    trailers.isEmpty() && revenue == null && budget == null
                 ) {
                     return@withContext null
                 }
@@ -485,7 +488,9 @@ class TmdbMetadataService(
                     collectionName = collectionName,
                     originalTitle = originalTitle,
                     alternativeTitles = altTitles,
-                    trailers = trailers
+                    trailers = trailers,
+                    budget = budget,
+                    revenue = revenue
                 )
                 enrichmentCache[cacheKey] = enrichment
                 requestDeferred.complete(enrichment)
@@ -1665,7 +1670,9 @@ data class TmdbEnrichment(
     val collectionName: String?,
     val originalTitle: String? = null,
     val alternativeTitles: List<String> = emptyList(),
-    val trailers: List<MetaTrailer> = emptyList()
+    val trailers: List<MetaTrailer> = emptyList(),
+    val budget: Long? = null,
+    val revenue: Long? = null
 )
 
 data class TmdbEpisodeEnrichment(

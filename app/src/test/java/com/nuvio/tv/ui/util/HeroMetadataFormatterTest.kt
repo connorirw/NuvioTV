@@ -39,4 +39,20 @@ class HeroMetadataFormatterTest {
     fun `passes through text it cannot read as minutes`() {
         assertEquals("unknown", formatHeroRuntime("unknown"))
     }
+
+    @Test
+    fun `formats currency amounts into standard notation`() {
+        assertEquals("$150M USD", formatCurrency(150_000_000L))
+        assertEquals("$1.2B USD", formatCurrency(1_200_000_000L))
+        assertEquals("$2B USD", formatCurrency(2_000_000_000L))
+        assertEquals("$500K USD", formatCurrency(500_000L))
+        assertEquals("$250 USD", formatCurrency(250L))
+    }
+
+    @Test
+    fun `returns null for zero negative or null currency amounts`() {
+        assertNull(formatCurrency(null))
+        assertNull(formatCurrency(0L))
+        assertNull(formatCurrency(-50_000L))
+    }
 }
